@@ -9,11 +9,11 @@ import numpy as np
 # ==========================================
 st.set_page_config(page_title="FIFA Scout Pro", layout="wide")
 
-# Hardcoded names based on your Cluster Analysis
+# Cluster Names (No Emojis)
 CLUSTER_NAMES = {
-    0: "🌟 Elite Superstars (High Wage & Skill)",
-    1: "💎 Young Prospects (High Potential)",
-    2: "🛡️ Reliable Veterans (Solid & Experienced)"
+    0: "Elite Superstars (High Wage & Skill)",
+    1: "Young Prospects (High Potential)",
+    2: "Reliable Veterans (Solid & Experienced)"
 }
 
 # ==========================================
@@ -21,10 +21,10 @@ CLUSTER_NAMES = {
 # ==========================================
 st.sidebar.header("Project Details")
 st.sidebar.text("Name: Kyaw Toe Toe Han")
-st.sidebar.text("Student ID: [ENTER ID HERE]")  # <--- Type your ID here
-st.sidebar.text("Class: [ENTER CLASS HERE]")     # <--- Type your Class here
-st.sidebar.text("Project: FIFA Player Clustering")
-st.sidebar.text("Professor: Tr. NN")
+st.sidebar.text("Student ID: PIUS20230059")
+st.sidebar.text("Introduction To Machine Learning")
+st.sidebar.text("Final Project")
+st.sidebar.text("Professor Dr. Nwe Nwe Htay Win")
 
 st.sidebar.divider()
 
@@ -32,7 +32,7 @@ st.sidebar.divider()
 st.sidebar.header("Choose a Feature")
 menu = st.sidebar.radio(
     "Select Tool:",
-    ["🛡️ Club Strategy Scanner", "💰 The Smart Recruiter", "📝 AI Scout Report"]
+    ["Club Strategy Scanner", "The Smart Recruiter", "Scout Report"]
 )
 
 # ==========================================
@@ -43,7 +43,7 @@ def load_data():
     try:
         df = pd.read_csv('players_22.csv')
     except FileNotFoundError:
-        st.error("⚠️ Error: 'players_22.csv' not found.")
+        st.error("Error: 'players_22.csv' not found.")
         st.stop()
 
     if 'growth_potential' not in df.columns:
@@ -66,7 +66,7 @@ def load_model():
             scaler = pickle.load(file)
         return model, scaler
     except FileNotFoundError:
-        st.error("⚠️ Error: Model files not found.")
+        st.error("Error: Model files not found.")
         st.stop()
 
 df = load_data()
@@ -87,60 +87,67 @@ df['Cluster Name'] = df['Cluster'].map(CLUSTER_NAMES)
 # ==========================================
 
 # --- FEATURE 1: CLUB STRATEGY SCANNER ---
-if menu == "🛡️ Club Strategy Scanner":
-    st.header("🛡️ Club Strategy Scanner")
+if menu == "Club Strategy Scanner":
+    st.header("Club Strategy Scanner")
     st.write("Analyze a football club's 'DNA' to see what kind of players they recruit.")
     
-    # Select Club
+    # 1. User Inputs
     club_list = df['club_name'].sort_values().unique()
     selected_club = st.selectbox("Select a Club:", club_list)
     
-    # Filter Data
-    club_data = df[df['club_name'] == selected_club]
-    cluster_counts = club_data['Cluster Name'].value_counts().reset_index()
-    cluster_counts.columns = ['Player Type', 'Count']
-    
-    # Display Pie Chart
-    fig_pie = px.pie(
-        cluster_counts, 
-        values='Count', 
-        names='Player Type', 
-        title=f"Player Composition: {selected_club}",
-        color_discrete_sequence=px.colors.qualitative.Pastel
-    )
-    st.plotly_chart(fig_pie)
+    # 2. Button to trigger action
+    if st.button("Analyze Club Strategy"):
+        # Filter Data
+        club_data = df[df['club_name'] == selected_club]
+        cluster_counts = club_data['Cluster Name'].value_counts().reset_index()
+        cluster_counts.columns = ['Player Type', 'Count']
+        
+        # Display Pie Chart
+        st.subheader(f"Player Composition: {selected_club}")
+        fig_pie = px.pie(
+            cluster_counts, 
+            values='Count', 
+            names='Player Type', 
+            title=f"Distribution of Player Types",
+            color_discrete_sequence=px.colors.qualitative.Pastel
+        )
+        st.plotly_chart(fig_pie)
+        st.info("Insight: This chart reveals if the club relies on Veterans, Prospects, or Superstars.")
 
 # --- FEATURE 2: THE SMART RECRUITER ---
-elif menu == "💰 The Smart Recruiter":
-    st.header("💰 The Smart Recruiter")
+elif menu == "The Smart Recruiter":
+    st.header("The Smart Recruiter")
     st.write("Find the best players that fit your budget and desired playing style.")
     
     col1, col2 = st.columns(2)
     with col1:
         target_cluster = st.selectbox("1. I want this Player Type:", list(CLUSTER_NAMES.values()))
     with col2:
-        max_wage = st.slider("2. My Weekly Budget is (€):", 1000, 300000, 20000, step=1000)
+        max_wage = st.slider("2. My Weekly Budget is (EUR):", 1000, 300000, 20000, step=1000)
     
-    # Find Cluster ID from Name
-    target_id = [k for k, v in CLUSTER_NAMES.items() if v == target_cluster][0]
-    
-    # Filter Results
-    results = df[
-        (df['Cluster'] == target_id) & 
-        (df['wage_eur'] <= max_wage)
-    ].sort_values(by='overall', ascending=False).head(10)
-    
-    st.subheader("Top Recommendations")
-    if not results.empty:
-        st.table(results[['short_name', 'age', 'overall', 'wage_eur', 'club_name']])
-    else:
-        st.warning("No players found. Try increasing your budget.")
-# --- FEATURE 3: AI SCOUT REPORT (FIXED) ---
-elif menu == "📝 AI Scout Report":
-    st.header("📝 AI Scout Report")
+    # Button to trigger action
+    if st.button("Find Best Matches"):
+        # Find Cluster ID from Name
+        target_id = [k for k, v in CLUSTER_NAMES.items() if v == target_cluster][0]
+        
+        # Filter Results
+        results = df[
+            (df['Cluster'] == target_id) & 
+            (df['wage_eur'] <= max_wage)
+        ].sort_values(by='overall', ascending=False).head(10)
+        
+        st.subheader(f"Top 10 Recommendations for '{target_cluster}'")
+        if not results.empty:
+            st.table(results[['short_name', 'age', 'overall', 'wage_eur', 'club_name','growth_potential']])
+        else:
+            st.warning("No players found. Try increasing your budget.")
+
+# --- FEATURE 3: AI SCOUT REPORT ---
+elif menu == "Scout Report":
+    st.header("Scout Report")
     st.write("Enter a player's raw statistics to identify which category they belong to.")
 
-    # We use a 'form' so the app doesn't reload until you press Submit
+    # Form to prevent reloading
     with st.form("scout_form"):
         c1, c2, c3 = st.columns(3)
         with c1:
@@ -148,22 +155,21 @@ elif menu == "📝 AI Scout Report":
             p_potential = st.number_input("Potential Rating", 40, 99, 75)
             p_age = st.number_input("Age", 16, 40, 21)
         with c2:
-            p_wage = st.number_input("Weekly Wage (€)", 500, 1000000, 5000)
-            p_value = st.number_input("Market Value (€)", 0, 200000000, 2000000)
-            st.caption("*(Growth Potential is calculated automatically)*")
+            p_wage = st.number_input("Weekly Wage (EUR)", 500, 1000000, 5000)
+            p_value = st.number_input("Market Value (EUR)", 0, 200000000, 2000000)
+            st.caption("*(Growth Potential calculated automatically)*")
         with c3:
             p_pass = st.number_input("Passing", 1, 99, 60)
             p_shoot = st.number_input("Shooting", 1, 99, 60)
             p_dribble = st.number_input("Dribbling", 1, 99, 60)
 
-        # The Button is now inside the form
         submitted = st.form_submit_button("Generate Report")
 
         if submitted:
-            # 1. Calculate Growth manually here
+            # 1. Calculate Growth
             p_growth = p_potential - p_overall
 
-            # 2. Prepare Data (Must match the exact column order of the scaler)
+            # 2. Prepare Data
             input_cols = [
                 'overall', 'potential', 'wage_eur', 'value_eur', 
                 'age', 'passing', 'shooting', 'dribbling', 'growth_potential'
@@ -180,7 +186,6 @@ elif menu == "📝 AI Scout Report":
                 pred_id = kmeans_model.predict(input_scaled)[0]
                 pred_name = CLUSTER_NAMES[pred_id]
                 
-                st.success(f"✅ Analysis Result: This player is a **{pred_name}**.")
-                st.info(f"Why? Their stats (Age: {p_age}, Overall: {p_overall}) match the patterns of the **{pred_name}** group.")
+                st.success(f"Analysis Result: This player is a **{pred_name}**.")
             except Exception as e:
-                st.error(f"Error during prediction: {e}")
+                st.error(f"Error: {e}")
