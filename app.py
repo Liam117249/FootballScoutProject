@@ -15,12 +15,17 @@ CLUSTER_NAMES = {
 }
 
 # side bar
-st.sidebar.header("Project Details")
-st.sidebar.text("Name: Kyaw Toe Toe Han")
-st.sidebar.text("Student ID: PIUS20230059")
-st.sidebar.text("Introduction To Machine Learning")
-st.sidebar.text("Final Project")
-st.sidebar.text("Professor Dr. Nwe Nwe Htay Win")
+st.sidebar.title("Smart Football Scout")
+st.sidebar.image(
+    "https://talloiresnetwork.tufts.edu/wp-content/uploads//Parami-University-1.png",
+    use_container_width=True
+)
+st.sidebar.markdown("---")
+st.sidebar.subheader("Project Details")
+st.sidebar.write("**Name:** Kyaw Toe Toe Han")
+st.sidebar.write("**ID:** PIUS20230059")
+st.sidebar.write("**Course:** Introduction to Machine Learning")
+st.sidebar.write("**Professor:** Nwe Nwe Htay Win")
 
 st.sidebar.divider()
 
