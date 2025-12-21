@@ -4,21 +4,17 @@ import plotly.express as px
 import pickle
 import numpy as np
 
-# ==========================================
-# 1. APP CONFIGURATION & CLUSTER NAMES
-# ==========================================
+# app appearance
 st.set_page_config(page_title="FIFA Scout Pro", layout="wide")
 
-# Cluster Names 
+# give cluster Names 
 CLUSTER_NAMES = {
     0: "Young Prospects (High Potential)",
     1: "Reliable Veterans (Solid & Experienced)",
     2: "Elite Superstars (High Wage & Skill)"
 }
 
-# ==========================================
-# 2. SIDEBAR - STUDENT INFO & NAVIGATION
-# ==========================================
+# side bar
 st.sidebar.header("Project Details")
 st.sidebar.text("Name: Kyaw Toe Toe Han")
 st.sidebar.text("Student ID: PIUS20230059")
@@ -35,9 +31,8 @@ menu = st.sidebar.radio(
     ["Club Strategy Scanner", "The Smart Recruiter", "Scout Report"]
 )
 
-# ==========================================
+
 # 3. LOAD DATA & MODELS
-# ==========================================
 @st.cache_data
 def load_data():
     try:
@@ -82,11 +77,11 @@ X_scaled = scaler.transform(X)
 df['Cluster'] = kmeans_model.predict(X_scaled)
 df['Cluster Name'] = df['Cluster'].map(CLUSTER_NAMES)
 
-# ==========================================
-# 4. MAIN FEATURES
-# ==========================================
 
-# --- FEATURE 1: CLUB STRATEGY SCANNER ---
+# MAIN FEATURES
+
+
+# FEATURE 1: CLUB STRATEGY SCANNER
 if menu == "Club Strategy Scanner":
     st.header("Club Strategy Scanner")
     st.write("Analyze a football club's 'DNA' to see what kind of players they recruit.")
@@ -114,7 +109,7 @@ if menu == "Club Strategy Scanner":
         st.plotly_chart(fig_pie)
         st.info("Insight: This chart reveals if the club relies on Veterans, Prospects, or Superstars.")
 
-# --- FEATURE 2: THE SMART RECRUITER ---
+# FEATURE 2: THE SMART RECRUITER
 elif menu == "The Smart Recruiter":
     st.header("The Smart Recruiter")
     st.write("Find the best players that fit your budget and desired playing style.")
@@ -142,7 +137,7 @@ elif menu == "The Smart Recruiter":
         else:
             st.warning("No players found. Try increasing your budget.")
 
-# --- FEATURE 3: AI SCOUT REPORT ---
+# FEATURE 3: AI SCOUT REPORT
 elif menu == "Scout Report":
     st.header("Scout Report")
     st.write("Enter a player's raw statistics to identify which category they belong to.")
