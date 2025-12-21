@@ -25,7 +25,7 @@ st.sidebar.subheader("Project Details")
 st.sidebar.write("**Name:** Kyaw Toe Toe Han")
 st.sidebar.write("**ID:** PIUS20230059")
 st.sidebar.write("**Course:** Introduction to Machine Learning")
-st.sidebar.write("**Professor:** Nwe Nwe Htay Win")
+st.sidebar.write("**Professor:** Dr. Nwe Nwe Htay Win")
 
 st.sidebar.divider()
 
