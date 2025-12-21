@@ -184,8 +184,31 @@ elif menu == "Scout Report":
             try:
                 input_scaled = scaler.transform(input_data)
                 pred_id = kmeans_model.predict(input_scaled)[0]
-                pred_name = CLUSTER_NAMES[pred_id]
                 
-                st.success(f"Analysis Result: This player is a **{pred_name}**.")
+                # --- LOGIC FIX: OVERRIDE CLUSTER NAME BASED ON AGE ---
+                if pred_id == 1 and p_age > 23:
+                    # If model says "Young Prospect" but age is high, rename it
+                    pred_name = "🛡️ Experienced Role Player (Tier 2)"
+                elif pred_id == 1:
+                    # If model says "Young Prospect" and age is low
+                    pred_name = "💎 Young Prospect (High Potential)"
+                else:
+                    # Keep original names for other clusters (Superstars/Veterans)
+                    pred_name = CLUSTER_NAMES.get(pred_id, "Unknown Cluster")
+                # -----------------------------------------------------
+                
+                st.success(f"✅ Analysis Result: This player is a **{pred_name}**.")
+                
+                # Visualizing the player stats relative to a generic average
+                st.subheader("Player Radar Chart")
+                stats_dict = {
+                    'Passing': p_pass, 'Shooting': p_shoot, 
+                    'Dribbling': p_dribble, 'Overall': p_overall, 'Potential': p_potential
+                }
+                radar_df = pd.DataFrame(dict(r=list(stats_dict.values()), theta=list(stats_dict.keys())))
+                fig = px.line_polar(radar_df, r='r', theta='theta', line_close=True, range_r=[0,100])
+                fig.update_traces(fill='toself')
+                st.plotly_chart(fig)
+
             except Exception as e:
-                st.error(f"Error: {e}")
+                st.error(f"Error during prediction: {e}")
