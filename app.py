@@ -142,7 +142,7 @@ elif menu == "The Smart Recruiter":
         else:
             st.warning("No players found. Try increasing your budget.")
 
-# FEATURE 3: AI SCOUT REPORT
+# FEATURE 3: SCOUT REPORT
 elif menu == "Scout Report":
     st.header("Scout Report")
     st.write("Enter a player's raw statistics to identify which category they belong to.")
